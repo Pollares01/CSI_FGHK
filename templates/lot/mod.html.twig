@@ -1,0 +1,59 @@
+
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello LotController!{% endblock %}
+
+{% block javascripts %}
+    <script type="text/javascript">
+        var listProduits = "<option selected>Sélectionnez un produit</option>";
+        window.onload = function (){
+            $.ajax({
+                url: '/ajax/getListProduits',
+                success: function (reussite) {
+                    jQuery.each(reussite, function (e) {
+                        listProduits+='<option value="'+e+'">'+reussite[e]+'</option>'
+                    })
+                    $('#listProduits').append('<div class="btn btn-outline-danger" onclick="addProduit()"><i class="far fa-plus-square fa-2x" style="size: 3px"></i> AJOUTER UN PRODUIT</div>')
+                }
+            })
+        }
+        function addProduit(){
+            let nb = $('#lot_nbTypeArt');
+            nb.val(parseInt(nb.val())+1);
+            //<input type="hidden" id="lot_nbTypeArt" name="lot[nbTypeArt]" value="6">
+            //<input type="number" id="lot_nbTypeArt_qte_'+nb.val()+'" name="lot[nbTypeArt_qte_'+nb.val()+']" class="form-control">
+            let aAjotuer = '<div class="row">' +
+                '<div class="col-6"><select required class="form-control">'+listProduits+'</select></div>' +
+                '<div class="col-6"><input required type="number" id="lot_nbTypeArt_qte_'+nb.val()+'" name="lot[nbTypeArt_qte_'+nb.val()+']" class="form-control"></div>' +
+                '</div><br>'
+            $('#listProduits').prepend(aAjotuer)
+        }
+    </script>
+
+{% endblock %}
+
+{% block body %}
+    <div class="jumbotron">
+        <div class="display-4">EDITER UN LOT</div>
+    </div>
+
+    <div class="container">
+        {{ form_start(form) }}
+        <div class="row">
+            <div class="col-6">{{ form_row(form.ltPrixMinimum) }}</div>
+            <div class="col-6">{{ form_row(form.ltPrixEstime) }}</div>
+            <div class="col-6">{{ form_row(form.ltDateDebut) }}</div>
+            <div class="col-6">{{ form_row(form.ltDateFin) }}</div>
+            <div class="col-6">{{ form_row(form.ltStatut) }}</div>
+        </div>
+        <br>
+        <div id="listProduits"></div>
+
+
+
+        <br>
+        <button type="submit" class="btn btn-success">AJOUTER</button>
+        {{ form_end(form) }}
+    </div>
+
+{% endblock %}

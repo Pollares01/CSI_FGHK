@@ -1,0 +1,38 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Produits{% endblock %}
+
+{% block body %}
+    <div class="jumbotron">
+        <div class="display-4">
+            LISTE DES PRODUITS
+        </div>
+        <hr>
+        <p class="lead">
+            <a href="{{ path('produit_new') }}" class="btn btn-outline-dark">AJOUTER UN PRODUIT</a>
+        </p>
+    </div>
+    <div class="container">
+        <br>
+        <table class="table table-active ">
+            <thead>
+                <th scope="col"></th>
+                <th scope="col">Nom</th>
+                <th scope="col">Type</th>
+                <th scope="col" style="width: 50%">Description</th>
+            </thead>
+            {% for prod in produits %}
+                <tr>
+                    <td></td>
+                    <td>{{ prod.protNom }}</td>
+                    <td>{{ prod.protType }}</td>
+                    <td>{{ prod.protDescription }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+
+
+
+
+{% endblock %}

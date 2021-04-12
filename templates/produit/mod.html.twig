@@ -1,0 +1,22 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello LotController!{% endblock %}
+
+{% block body %}
+    <div class="jumbotron">
+        <div class="display-4">EDITER UN PRODUIT</div>
+    </div>
+
+    <div class="container">
+        {{ form_start(form) }}
+        <div class="row">
+            <div class="col-6">{{ form_row(form.protNom) }}</div>
+            <div class="col-6">{{ form_row(form.protType) }}</div>
+        </div>
+        {{ form_row(form.protDescription) }}
+        <br>
+        <button type="submit" class="btn btn-success">AJOUTER</button>
+        {{ form_end(form) }}
+    </div>
+
+{% endblock %}
