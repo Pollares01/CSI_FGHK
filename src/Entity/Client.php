@@ -3,14 +3,17 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * Client
  *
  * @ORM\Table(name="client")
  * @ORM\Entity(repositoryClass="App\Repository\ClientRepository")
+ * @UniqueEntity(fields={"clEmail"}, message="There is already an account with this clEmail")
  */
-class Client
+class Client implements UserInterface
 {
     /**
      * @return int
@@ -199,4 +202,28 @@ class Client
     private $clAdresse;
 
 
+    public function getRoles()
+    {
+        return ['ROLE_CLIENT'];
+    }
+
+    public function getPassword()
+    {
+        // TODO: Implement getPassword() method.
+    }
+
+    public function getSalt()
+    {
+        // TODO: Implement getSalt() method.
+    }
+
+    public function getUsername()
+    {
+        // TODO: Implement getUsername() method.
+    }
+
+    public function eraseCredentials()
+    {
+        // TODO: Implement eraseCredentials() method.
+    }
 }
