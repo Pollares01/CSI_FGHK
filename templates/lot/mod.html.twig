@@ -1,32 +1,36 @@
-
 {% extends 'base.html.twig' %}
 
 {% block title %}Hello LotController!{% endblock %}
 
 {% block javascripts %}
     <script type="text/javascript">
-        var listProduits = "<option selected>Sélectionnez un produit</option>";
-        window.onload = function (){
-            $.ajax({
-                url: '/ajax/getListProduits',
-                success: function (reussite) {
-                    jQuery.each(reussite, function (e) {
-                        listProduits+='<option value="'+e+'">'+reussite[e]+'</option>'
-                    })
-                    $('#listProduits').append('<div class="btn btn-outline-danger" onclick="addProduit()"><i class="far fa-plus-square fa-2x" style="size: 3px"></i> AJOUTER UN PRODUIT</div>')
-                }
-            })
-        }
-        function addProduit(){
-            let nb = $('#lot_nbTypeArt');
-            nb.val(parseInt(nb.val())+1);
-            //<input type="hidden" id="lot_nbTypeArt" name="lot[nbTypeArt]" value="6">
-            //<input type="number" id="lot_nbTypeArt_qte_'+nb.val()+'" name="lot[nbTypeArt_qte_'+nb.val()+']" class="form-control">
-            let aAjotuer = '<div class="row">' +
-                '<div class="col-6"><select required class="form-control">'+listProduits+'</select></div>' +
-                '<div class="col-6"><input required type="number" id="lot_nbTypeArt_qte_'+nb.val()+'" name="lot[nbTypeArt_qte_'+nb.val()+']" class="form-control"></div>' +
-                '</div><br>'
-            $('#listProduits').prepend(aAjotuer)
+        // var listProduits = "<option selected>Sélectionnez un produit</option>";
+        // window.onload = function (){
+        //     $.ajax({
+        //         url: '/ajax/getListProduits',
+        //         success: function (reussite) {
+        //             jQuery.each(reussite, function (e) {
+        //                 listProduits+='<option value="'+e+'">'+reussite[e]+'</option>'
+        //             })
+        //             $('#listProduits').append('<div class="btn btn-outline-danger" onclick="addProduit()"><i class="far fa-plus-square fa-2x" style="size: 3px"></i> AJOUTER UN PRODUIT</div>')
+        //         }
+        //     })
+        // }
+        // function addProduit(){
+        //     let nb = $('#lot_nbTypeArt');
+        //     nb.val(parseInt(nb.val())+1);
+        //     //<input type="hidden" id="lot_nbTypeArt" name="lot[nbTypeArt]" value="6">
+        //     //<input type="number" id="lot_nbTypeArt_qte_'+nb.val()+'" name="lot[nbTypeArt_qte_'+nb.val()+']" class="form-control">
+        //     let aAjotuer = '<div class="row">' +
+        //         '<div class="col-6"><select required class="form-control">'+listProduits+'</select></div>' +
+        //         '<div class="col-6"><input required type="number" id="lot_nbTypeArt_qte_'+nb.val()+'" name="lot[nbTypeArt_qte_'+nb.val()+']" class="form-control"></div>' +
+        //         '</div><br>'
+        //     $('#listProduits').prepend(aAjotuer)
+        // }
+
+
+        function changeDateDebut() {
+            $('#lot_ltDateFin').attr('min', $('#lot_ltDateDebut').val())
         }
     </script>
 
@@ -42,16 +46,40 @@
         <div class="row">
             <div class="col-6">{{ form_row(form.ltPrixMinimum) }}</div>
             <div class="col-6">{{ form_row(form.ltPrixEstime) }}</div>
-            <div class="col-6">{{ form_row(form.ltDateDebut) }}</div>
+        </div>
+        <div class="row">
+            <div class="col-6">{{ form_row(form.ltDateDebut, {
+                    'attr': {
+                        'onchange':'changeDateDebut()'
+                    }
+                }) }}</div>
             <div class="col-6">{{ form_row(form.ltDateFin) }}</div>
+        </div>
+        <div class="row">
             <div class="col-6">{{ form_row(form.ltStatut) }}</div>
         </div>
+
+        <table class="table table-bordered">
+            <thead class="thead-dark">
+                <th scope="col"></th>
+                <th scope="col">Produit</th>
+                <th scope="col">Quantité</th>
+            </thead>
+
+        {% for prod in listProd %}
+            <tbody>
+                <td></td>
+                <td>{{ prod.protNom }}</td>
+                <td>{{ form_row(form.children["lotProduitNb"~prod.protId]) }}</td>
+            </tbody>
+        {% endfor %}
+        </table>
         <br>
-        <div id="listProduits"></div>
+        {# <div id="listProduits"></div> #}
 
 
 
-        <br>
+        {# <br> #}
         <button type="submit" class="btn btn-success">AJOUTER</button>
         {{ form_end(form) }}
     </div>

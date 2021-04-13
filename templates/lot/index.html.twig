@@ -14,7 +14,31 @@
     </div>
 
     <div class="container">
-
+        <br>
+        <table class="table table-active ">
+            <thead>
+            <th scope="col"></th>
+            <th scope="col">Date début</th>
+            <th scope="col">Date fin</th>
+            <th scope="col">Statut</th>
+            <th scope="col">Prix mini / prix estimé</th>
+            <th scope="col" >Composition</th>
+            </thead>
+            {% for lot in listLot %}
+                <tr>
+                    <td></td>
+                    <td>{{ lot.ltDateDebut | date('d/m/Y') }}</td>
+                    <td>{{ lot.ltDateFin | date('d/m/Y') }}</td>
+                    <td>{{ lot.ltStatut }}</td>
+                    <td>{{ lot.ltPrixMinimum }} / {{ lot.ltPrixEstime }}</td>
+                    <td>
+                        {% for comp in lot.composition %}
+                            {{ comp.compIdproduit.protNom }} x{{ comp.compQuantite }}<br>
+                        {% endfor %}
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
     </div>
 
 {% endblock %}

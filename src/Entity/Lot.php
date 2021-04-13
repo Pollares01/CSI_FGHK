@@ -193,4 +193,28 @@ class Lot
     }
 
 
+    /**
+     * @ORM\OneToMany(targetEntity=Composition::class, mappedBy="compIdlot")
+     */
+    private $composition;
+
+    /**
+     * @return mixed
+     */
+    public function getComposition()
+    {
+        return $this->composition;
+    }
+
+    /**
+     * @param mixed $composition
+     */
+    public function setComposition($composition): void
+    {
+        $this->composition = $composition;
+    }
+
+
+
+
 }

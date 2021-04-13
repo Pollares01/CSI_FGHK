@@ -53,25 +53,25 @@ class Composition
     }
 
     /**
-     * @param \Lot $compIdlot
+     * @param Lot $compIdlot
      */
-    public function setCompIdlot(\Lot $compIdlot): void
+    public function setCompIdlot(Lot $compIdlot)
     {
         $this->compIdlot = $compIdlot;
     }
 
     /**
-     * @return \Produit
+     * @return Produit
      */
-    public function getCompIdproduit(): \Produit
+    public function getCompIdproduit(): Produit
     {
         return $this->compIdproduit;
     }
 
     /**
-     * @param \Produit $compIdproduit
+     * @param Produit $compIdproduit
      */
-    public function setCompIdproduit(\Produit $compIdproduit): void
+    public function setCompIdproduit(Produit $compIdproduit): void
     {
         $this->compIdproduit = $compIdproduit;
     }
@@ -93,7 +93,7 @@ class Composition
     private $compQuantite;
 
     /**
-     * @var \Lot
+     * @var Lot
      *
      * @ORM\ManyToOne(targetEntity="Lot")
      * @ORM\JoinColumns({
@@ -103,7 +103,7 @@ class Composition
     private $compIdlot;
 
     /**
-     * @var \Produit
+     * @var Produit
      *
      * @ORM\ManyToOne(targetEntity="Produit")
      * @ORM\JoinColumns({
