@@ -101,9 +101,9 @@ class Proposition
     }
 
     /**
-     * @param \Client $propClient
+     * @param Client $propClient
      */
-    public function setPropClient(\Client $propClient): void
+    public function setPropClient(Client $propClient): void
     {
         $this->propClient = $propClient;
     }
@@ -154,6 +154,34 @@ class Proposition
      * })
      */
     private $propClient;
+
+    /**
+     * @var \Lot
+     *
+     * @ORM\ManyToOne(targetEntity="Lot")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="prop_lot", referencedColumnName="lt_idlot")
+     * })
+     */
+    private $propLot;
+
+    /**
+     * @return \Lot
+     */
+    public function getPropLot(): \Lot
+    {
+        return $this->propLot;
+    }
+
+    /**
+     * @param Lot $propLot
+     */
+    public function setPropLot(Lot $propLot): void
+    {
+        $this->propLot = $propLot;
+    }
+
+
 
 
 }

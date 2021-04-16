@@ -62,17 +62,17 @@ class RegistrationFormType extends AbstractType
                 ]
             ])
             ->add('clDateDeNaiss', DateType::class, [
-                'label'=>'Date de naissace',
+                'label'=>'Date de naissance',
                 'widget'=>'single_text',
                 'attr'=>[
                     'class' => 'form-control'
                 ]
             ])
             ->add('clAdresse', TextType::class, [
-                'label'=>' ',
+                'label'=>'Adresse',
                 'attr'=> [
                     'class'=>'form-control',
-                    'placeholder'=>' '
+                    'placeholder'=>'Ex: 37 rue des pommes, CÉOUSSA'
                 ]
             ])
         ;

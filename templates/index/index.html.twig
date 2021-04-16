@@ -2,6 +2,130 @@
 
 {% block title %}Hello IndexController!{% endblock %}
 
-{% block body %}
+{% block javascripts %}
+    <script type="text/javascript">
+        function encherir(id, prixMin,path){
+            $.confirm({
+                title: 'A combien voulez-vous enchérir ?',
+                closeIcon: true,
+                escapeKey: true,
+                backgroundDismiss: true,
+                icon: 'fa fa-euro-sign fa-spin',
+                closeIconClass: 'fa fa-close',
+                columnClass: 'm',
+                content: '' +
+                    '<form action="" class="formName">' +
+                    '<div class="container"></div><div class="form-group">' +
+                    '<label>Entrez votre prix :</label>' +
+                    '<input type="number" placeholder="Votre prix" min="'+prixMin+'" value="'+prixMin+'" class="prix form-control" required />' +
+                    '</div></div>' +
+                    '</form>',
+                buttons: {
+                    formSubmit: {
+                        text: 'Ajouter la proposition',
+                        btnClass: 'btn btn-outline-primary',
+                        action: function () {
+                            var prix = this.$content.find('.prix').val();
+                            if(!prix){
+                                $.alert('Veuillez entrer un prix valide');
+                                return false;
+                            }
+                            $.ajax({
+                                url: path,
+                                data:{
+                                    id:id,
+                                    prix:prix,
+                                },
+                                dataType:'json',
+                                method:'post',
+                                success: function(){
+                                    $.alert({
+                                        title: 'Votre proposition a été émise !',
+                                        content: ' ',
+                                        type: 'green',
+                                        columnClass:'m'
+                                    })
+                                },
+                                error: function (){
+                                    $.alert({
+                                        title: 'Oups... Une erreur est parvenue !',
+                                        content: ' ',
+                                        type: 'red',
+                                        columnClass:'m'
+                                    })
+                                }
+                            })
+                        }
+                    },
+                    cancel: function () {
+                        //close
+                    },
+                },
+                onContentReady: function () {
+                    // bind to events
+                    var jc = this;
+                    this.$content.find('form').on('submit', function (e) {
+                        // if the user submits the form by pressing enter in the field.
+                        e.preventDefault();
+                        jc.$$formSubmit.trigger('click'); // reference the button and click it
+                    });
+                }
+            })
+        }
+    </script>
+{% endblock %}
 
+{% block body %}
+    <div class="jumbotron">
+        <div class="display-4">
+            BIENVENUE SUR NOTRE SITE
+        </div>
+        <hr>
+        <p class="lead">
+            Sur ce site vous pourrez choisir des lots mis en vente par nos gestionnaires, en suivant l'ordre suivant :
+            <br>
+            <ul>
+                <li>Sélectionnez un lot</li>
+                <li>Faites une proposition de prix sur ce lot</li>
+                <li>Voyez si elle est acceptée ou non !</li>
+                <li>Si vous remportez l'enchère, votre lot vous sera envoyé dans les plus brefs délais 😉</li>
+            </ul>
+        </p>
+    </div>
+
+    <div class="container">
+        <table class="table table-active">
+            <thead>
+                <th scope="col" style="width: 20%">Date début</th>
+                <th scope="col" style="width: 20%">Prix minimum</th>
+                <th scope="col">Composition</th>
+                <th scope="col">
+                    {% if not app.user %}
+                        <a href="{{ path('app_login') }}" class="alert-primary">Connectez-vous pour enchérir</a>
+                    {% endif %}
+                </th>
+            </thead>
+            <tbody>
+            {% for lot in lots %}
+                <tr>
+                    <td>{{ lot.ltDateDebut | date('d/m/Y') }}</td>
+                    <td>{{ lot.ltPrixMinimum }} €</td>
+                    <td>
+                        {% for comp in lot.composition %}
+                            {{ comp.compIdproduit.protNom }} x{{ comp.compQuantite }}<br>
+                        {% endfor %}
+                    </td>
+                    <td>
+                        {% if not app.user %}
+                            <i>Vous n'êtes pas connecté...</i>
+                        {% else %}
+                            <button onclick="encherir({{ lot.ltIdLot }}, {{ lot.ltPrixMinimum }} ,'{{ path('ajax_encherir') }}')" class="btn btn-outline-primary btn-block">J'enchéris !</button>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        {{ knp_pagination_render(lots) }}
+    </div>
 {% endblock %}

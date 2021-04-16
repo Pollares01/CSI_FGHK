@@ -6,16 +6,15 @@
     {% block stylesheets %}
         <link rel="stylesheet" href="{{ asset('/css/bootstrap.css') }}">
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+        <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.css">
     {% endblock %}
-
-
-
     <script
             src="https://code.jquery.com/jquery-3.6.0.min.js"
             integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
             crossorigin="anonymous"></script>
     <script src="https://kit.fontawesome.com/dabe9cba01.js" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" type="text/javascript"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.js"></script>
     {% block javascripts %}
 
     {% endblock %}
@@ -38,6 +37,13 @@
                 <a class="nav-link" href="{{ path('lot') }}">Lots</a>
             </li>
             <li class="nav-item">
+                {% if app.user %}
+                    <a class="nav-link" href="{{ path('app_logout') }}">Déconnexion</a>
+                {% else %}
+                    <a class="nav-link" href="{{ path('app_login') }}">Connexion</a>
+                {% endif %}
+            </li>
+            <li class="nav-item">
                 <a class="nav-link" href="{{ path('produit') }}">Produits</a>
             </li>
             {% if app.user %}
@@ -45,32 +51,7 @@
                     <a class="nav-link" href="#">Mon compte</a>
                 </li>
             {% endif %}
-
-
-            <li class="nav-item">
-                {% if app.user %}
-                    <a class="nav-link" href="{{ path('app_logout') }}">Déconnexion</a>
-                {% else %}
-                    <a class="nav-link" href="{{ path('app_login') }}">Connexion</a>
-                {% endif %}
-            </li>
-            {#                <li class="nav-item dropdown">#}
-            {#                    <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Dropdown</a>#}
-            {#                    <div class="dropdown-menu">#}
-            {#                        <a class="dropdown-item" href="#">Action</a>#}
-            {#                        <a class="dropdown-item" href="#">Another action</a>#}
-            {#                        <a class="dropdown-item" href="#">Something else here</a>#}
-            {#                        <div class="dropdown-divider"></div>#}
-            {#                        <a class="dropdown-item" href="#">Separated link</a>#}
-            {#                    </div>#}
-            {#                </li>#}
         </ul>
-        {#            <form class="form-inline my-2 my-lg-0">#}
-        {#                <label>#}
-        {#                    <input class="form-control mr-sm-2" type="text" placeholder="Search">#}
-        {#                </label>#}
-        {#                <button class="btn btn-secondary my-2 my-sm-0" type="submit">Search</button>#}
-        {#            </form>#}
     </div>
 </nav>
 {% block body %}{% endblock %}

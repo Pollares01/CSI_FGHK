@@ -30,7 +30,7 @@
                     <td>{{ lot.ltDateDebut | date('d/m/Y') }}</td>
                     <td>{{ lot.ltDateFin | date('d/m/Y') }}</td>
                     <td>{{ lot.ltStatut }}</td>
-                    <td>{{ lot.ltPrixMinimum }} / {{ lot.ltPrixEstime }}</td>
+                    <td>{{ lot.ltPrixMinimum }} € / {{ lot.ltPrixEstime }} €</td>
                     <td>
                         {% for comp in lot.composition %}
                             {{ comp.compIdproduit.protNom }} x{{ comp.compQuantite }}<br>
