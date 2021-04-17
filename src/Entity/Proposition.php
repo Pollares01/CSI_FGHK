@@ -93,9 +93,9 @@ class Proposition
     }
 
     /**
-     * @return \Client
+     * @return Client
      */
-    public function getPropClient(): \Client
+    public function getPropClient(): Client
     {
         return $this->propClient;
     }
@@ -146,7 +146,7 @@ class Proposition
     private $propAccept = false;
 
     /**
-     * @var \Client
+     * @var Client
      *
      * @ORM\ManyToOne(targetEntity="Client")
      * @ORM\JoinColumns({

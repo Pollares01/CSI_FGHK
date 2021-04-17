@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Lot;
 use App\Entity\Proposition;
 use App\Repository\LotRepository;
 use App\Repository\ProduitRepository;
@@ -85,6 +86,36 @@ class AjaxController extends AbstractController
                 return new Response($e->getMessage());
             }
             return new JsonResponse('ok');
+        }
+        return new Response('fail');
+    }
+
+
+    /**
+     * @Route("/ajax/lotProps", name="lot_props")
+     * @param Request $request
+     * @param PropositionRepository $propositionRepository
+     * @param LotRepository $lotRepository
+     * @return JsonResponse|Response
+     */
+    public function lotProp(Request $request, PropositionRepository $propositionRepository, LotRepository $lotRepository){
+        if($request->isXmlHttpRequest()){
+            $props = $propositionRepository->createQueryBuilder('p')
+                ->where('p.propLot = :pro')
+                ->setParameter('pro', $lotRepository->find($request->request->get('id')))
+                ->getQuery()
+                ->getResult();
+
+            $res = array();
+            foreach ($props as $prop) {
+//                dd($prop);
+                $res[$prop->getPropId()] = [
+                    'nomClient' => $prop->getPropClient()->getClNom() . ' ' . $prop->getPropClient()->getClPrenom(),
+                    'montant' => $prop->getPropPrix()
+                ];
+            }
+
+            return new JsonResponse($res);
         }
         return new Response('fail');
     }

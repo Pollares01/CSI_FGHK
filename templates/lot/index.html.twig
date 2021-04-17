@@ -2,6 +2,63 @@
 
 {% block title %}Hello LotController!{% endblock %}
 
+{% block javascripts %}
+    <script type="text/javascript">
+        function showPropositions(id, path){
+            $.ajax({
+                url: path,
+                data:{
+                    id:id
+                },
+                method:'post',
+                dataType: 'json',
+                success: function (reussite){
+                    if(reussite.length!==0){
+                        let content = '<table class="table table-bordered">'
+
+                        jQuery.each(reussite, function(e){
+                            content += '' +
+                                '<tr>' +
+                                '<td>' +
+                                reussite[e]['nomClient'] +
+                                '</td>' +
+                                '<td>' +
+                                reussite[e]['montant'] +
+                                ' €</td>' +
+                                '</tr>'
+                        })
+                        content += '</table>'
+
+                        $.alert({
+                            title: 'Liste des propositions du lot',
+                            content: content,
+                            type: 'black',
+                            columnClass: 'm'
+                        })
+                    } else {
+                        $.alert({
+                            title: 'Aucune propositions pour ce lot.',
+                            content: ' ',
+                            type: 'black',
+                            columnClass: 'm'
+                        })
+                    }
+
+                },
+                error: function (){
+                    $.alert({
+                        title: 'Oups... Une erreur est parvenue !',
+                        content: ' ',
+                        type: 'red',
+                        columnClass:'m'
+                    })
+                }
+            })
+        }
+    </script>
+
+{% endblock %}
+
 {% block body %}
     <div class="jumbotron">
         <div class="display-4">
@@ -26,7 +83,7 @@
             </thead>
             {% for lot in listLot %}
                 <tr>
-                    <td></td>
+                    <td><i class="fas fa-book-open" onclick="showPropositions({{ lot.ltIdLot }}, '{{ path('lot_props') }}')" title="Voir les visualisations"></i></td>
                     <td>{{ lot.ltDateDebut | date('d/m/Y') }}</td>
                     <td>{{ lot.ltDateFin | date('d/m/Y') }}</td>
                     <td>{{ lot.ltStatut }}</td>
