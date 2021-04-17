@@ -58,8 +58,9 @@ class AjaxController extends AbstractController
                     ->getSingleResult();
 
                 $prop->setPropPrix($prix);
-//                $prop->setPropDate(new \DateTime());
-//                $prop->setPropAccept(false);
+                if($prop->getPropNombre()+1==4){
+                    return new JsonResponse('non');
+                }
                 $prop->setPropNombre($prop->getPropNombre()+1);
                 $manager->persist($prop);
                 $manager->flush();
@@ -78,10 +79,10 @@ class AjaxController extends AbstractController
                         $manager->flush();
                     }
                 } catch (\Exception $e){
-                    return new Response('fail');
+                    return new Response($e->getMessage());
                 }
             } catch (NonUniqueResultException $e) {
-                return new Response('fail');
+                return new Response($e->getMessage());
             }
             return new JsonResponse('ok');
         }

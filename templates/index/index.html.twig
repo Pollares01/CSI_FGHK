@@ -4,7 +4,7 @@
 
 {% block javascripts %}
     <script type="text/javascript">
-        function encherir(id, prixMin,path){
+        function encherir(id, prixMin, path){
             $.confirm({
                 title: 'A combien voulez-vous enchérir ?',
                 closeIcon: true,
@@ -38,13 +38,37 @@
                                 },
                                 dataType:'json',
                                 method:'post',
-                                success: function(){
-                                    $.alert({
-                                        title: 'Votre proposition a été émise !',
-                                        content: ' ',
-                                        type: 'green',
-                                        columnClass:'m'
-                                    })
+                                success: function(response){
+                                    if(response === "non") {
+                                        $.alert({
+                                            title: 'Vous ne pouvez plus faire d\'enchères pour ce lot.',
+                                            content: ' ',
+                                            type: 'red',
+                                            columnClass:'m',
+                                            buttons:{
+                                                'ok':{
+                                                    action: function (){
+                                                        document.location.reload()
+                                                    }
+                                                }
+                                            }
+                                        })
+                                    } else {
+                                        $.alert({
+                                            title: 'Votre proposition a été émise !',
+                                            content: ' ',
+                                            type: 'green',
+                                            columnClass:'m',
+                                            buttons:{
+                                                'ok':{
+                                                    action: function (){
+                                                        document.location.reload()
+                                                    }
+                                                }
+                                            }
+                                        })
+                                    }
+
                                 },
                                 error: function (){
                                     $.alert({
@@ -119,7 +143,11 @@
                         {% if not app.user %}
                             <i>Vous n'êtes pas connecté...</i>
                         {% else %}
-                            <button onclick="encherir({{ lot.ltIdLot }}, {{ lot.ltPrixMinimum }} ,'{{ path('ajax_encherir') }}')" class="btn btn-outline-primary btn-block">J'enchéris !</button>
+                            {% if propositions[lot.ltIdLot] is defined %}
+                                <button onclick="encherir({{ lot.ltIdLot }}, {{ propositions[lot.ltIdLot] }} ,'{{ path('ajax_encherir') }}')" class="btn btn-outline-primary btn-block">J'enchéris !</button>
+                            {% else %}
+                                <button onclick="encherir({{ lot.ltIdLot }}, {{ lot.ltPrixMinimum }}, '{{ path('ajax_encherir') }}')" class="btn btn-outline-primary btn-block">J'enchéris !</button>
+                            {% endif %}
                         {% endif %}
                     </td>
                 </tr>

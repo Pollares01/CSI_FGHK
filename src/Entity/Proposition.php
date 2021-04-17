@@ -156,7 +156,7 @@ class Proposition
     private $propClient;
 
     /**
-     * @var \Lot
+     * @var Lot
      *
      * @ORM\ManyToOne(targetEntity="Lot")
      * @ORM\JoinColumns({
@@ -166,9 +166,9 @@ class Proposition
     private $propLot;
 
     /**
-     * @return \Lot
+     * @return Lot
      */
-    public function getPropLot(): \Lot
+    public function getPropLot(): Lot
     {
         return $this->propLot;
     }
