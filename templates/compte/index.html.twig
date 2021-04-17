@@ -13,6 +13,7 @@
                 <th scope="col">Produits</th>
                 <th scope="col">Votre proposition</th>
                 <th scope="col">Nombre de propositions</th>
+                <th scope="col">Dernière proposition acceptée ou non</th>
                 <th scope="col"></th>
             </thead>
 
@@ -28,6 +29,13 @@
                     <td>{{ prop.propPrix }}</td>
                     <td>
                         {{ prop.propNombre }}
+                    </td>
+                    <td>
+                        {% if prop.propAccept == false %}
+                            Non
+                        {% else %}
+                            Oui
+                        {% endif %}
                     </td>
                 </tr>
             {% endfor %}
