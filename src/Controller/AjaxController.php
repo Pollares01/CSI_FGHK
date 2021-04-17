@@ -10,6 +10,7 @@ use App\Repository\PropositionRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
+use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -79,7 +80,7 @@ class AjaxController extends AbstractController
                         $manager->persist($prop);
                         $manager->flush();
                     }
-                } catch (\Exception $e){
+                } catch (Exception $e){
                     return new Response($e->getMessage());
                 }
             } catch (NonUniqueResultException $e) {

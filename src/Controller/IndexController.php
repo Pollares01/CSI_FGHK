@@ -21,7 +21,8 @@ class IndexController extends AbstractController
      */
     public function index(LotRepository $lotRepository, PaginatorInterface $paginator, Request $request, PropositionRepository $propositionRepository): Response
     {
-        $query = $lotRepository->createQueryBuilder('l')->getQuery();
+        $query = $lotRepository->createQueryBuilder('l')
+            ->where('l.ltStatut = \'En vente\'')->getQuery();
 
         $listProp = $propositionRepository->createQueryBuilder('p')
             ->where('p.propClient = :id')

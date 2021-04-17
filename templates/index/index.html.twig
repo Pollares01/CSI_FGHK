@@ -121,7 +121,7 @@
         <table class="table table-active">
             <thead>
                 <th scope="col" style="width: 20%">Date début</th>
-                <th scope="col" style="width: 20%">Prix minimum</th>
+                <th scope="col" style="width: 20%">Prix estimé</th>
                 <th scope="col">Composition</th>
                 <th scope="col">
                     {% if not app.user %}
@@ -133,7 +133,7 @@
             {% for lot in lots %}
                 <tr>
                     <td>{{ lot.ltDateDebut | date('d/m/Y') }}</td>
-                    <td>{{ lot.ltPrixMinimum }} €</td>
+                    <td>{{ lot.ltPrixEstime }} €</td>
                     <td>
                         {% for comp in lot.composition %}
                             {{ comp.compIdproduit.protNom }} x{{ comp.compQuantite }}<br>
@@ -146,7 +146,7 @@
                             {% if propositions[lot.ltIdLot] is defined %}
                                 <button onclick="encherir({{ lot.ltIdLot }}, {{ propositions[lot.ltIdLot] }} ,'{{ path('ajax_encherir') }}')" class="btn btn-outline-primary btn-block">J'enchéris !</button>
                             {% else %}
-                                <button onclick="encherir({{ lot.ltIdLot }}, {{ lot.ltPrixMinimum }}, '{{ path('ajax_encherir') }}')" class="btn btn-outline-primary btn-block">J'enchéris !</button>
+                                <button onclick="encherir({{ lot.ltIdLot }}, 0, '{{ path('ajax_encherir') }}')" class="btn btn-outline-primary btn-block">J'enchéris !</button>
                             {% endif %}
                         {% endif %}
                     </td>

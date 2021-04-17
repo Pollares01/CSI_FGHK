@@ -2,44 +2,156 @@
 
 {% block title %}Hello CompteController!{% endblock %}
 
+{% block javascripts %}
+    <script type="text/javascript">
+        function encherir(id, prixMin, path){
+            $.confirm({
+                title: 'A combien voulez-vous enchérir ?',
+                closeIcon: true,
+                escapeKey: true,
+                backgroundDismiss: true,
+                icon: 'fa fa-euro-sign fa-spin',
+                closeIconClass: 'fa fa-close',
+                columnClass: 'm',
+                content: '' +
+                    '<form action="" class="formName">' +
+                    '<div class="container"></div><div class="form-group">' +
+                    '<label>Entrez votre prix :</label>' +
+                    '<input type="number" placeholder="Votre prix" min="'+prixMin+'" value="'+prixMin+'" class="prix form-control" required />' +
+                    '</div></div>' +
+                    '</form>',
+                buttons: {
+                    formSubmit: {
+                        text: 'Ajouter la proposition',
+                        btnClass: 'btn btn-outline-primary',
+                        action: function () {
+                            var prix = this.$content.find('.prix').val();
+                            if(!prix){
+                                $.alert('Veuillez entrer un prix valide');
+                                return false;
+                            }
+                            $.ajax({
+                                url: path,
+                                data:{
+                                    id:id,
+                                    prix:prix,
+                                },
+                                dataType:'json',
+                                method:'post',
+                                success: function(response){
+                                    if(response === "non") {
+                                        $.alert({
+                                            title: 'Vous ne pouvez plus faire d\'enchères pour ce lot.',
+                                            content: ' ',
+                                            type: 'red',
+                                            columnClass:'m',
+                                            buttons:{
+                                                'ok':{
+                                                    action: function (){
+                                                        document.location.reload()
+                                                    }
+                                                }
+                                            }
+                                        })
+                                    } else {
+                                        $.alert({
+                                            title: 'Votre proposition a été émise !',
+                                            content: ' ',
+                                            type: 'green',
+                                            columnClass:'m',
+                                            buttons:{
+                                                'ok':{
+                                                    action: function (){
+                                                        document.location.reload()
+                                                    }
+                                                }
+                                            }
+                                        })
+                                    }
+
+                                },
+                                error: function (){
+                                    $.alert({
+                                        title: 'Oups... Une erreur est parvenue !',
+                                        content: ' ',
+                                        type: 'red',
+                                        columnClass:'m'
+                                    })
+                                }
+                            })
+                        }
+                    },
+                    cancel: function () {
+                        //close
+                    },
+                },
+                onContentReady: function () {
+                    // bind to events
+                    var jc = this;
+                    this.$content.find('form').on('submit', function (e) {
+                        // if the user submits the form by pressing enter in the field.
+                        e.preventDefault();
+                        jc.$$formSubmit.trigger('click'); // reference the button and click it
+                    });
+                }
+            })
+        }
+    </script>
+{% endblock %}
+
 {% block body %}
     <div class="jumbotron">
         <div class="display-4">MON COMPTE</div>
-    </div>
-    <div class="container">
-        <table class="table table-active">
-            <thead>
-                <th scope="col"></th>
-                <th scope="col">Produits</th>
-                <th scope="col">Votre proposition</th>
-                <th scope="col">Nombre de propositions</th>
-                <th scope="col">Dernière proposition acceptée ou non</th>
-                <th scope="col"></th>
-            </thead>
+        {% if not app.user %}
+            <hr>
+            <p class="lead">VOUS N'ETES PAS CONNECTÉ, APPUYEZ <a href="{{ path('app_login') }}">ICI</a>.</p>
+            </div>
+            {% else %}
+                </div>
+                <div class="container">
+                    <table class="table table-active">
+                        <thead>
+                        <th scope="col"></th>
+                        <th scope="col">Produits</th>
+                        <th scope="col">Votre dernière proposition</th>
+                        <th scope="col">Nombre de propositions</th>
+                        <th scope="col" style="width: 20%">Dernière proposition acceptée ou non</th>
+                        <th scope="col"></th>
+                        </thead>
 
-            <tbody>
-            {% for prop in props %}
-                <tr>
-                    <td></td>
-                    <td>
-                        {% for comp in prop.propLot.composition %}
-                            {{ comp.compIdproduit.protNom }} x{{ comp.compQuantite }}<br>
+                        <tbody>
+                        {% for prop in props %}
+                            <tr>
+                                <td></td>
+                                <td>
+                                    {% for comp in prop.propLot.composition %}
+                                        {{ comp.compIdproduit.protNom }} x{{ comp.compQuantite }}<br>
+                                    {% endfor %}
+                                </td>
+                                <td>{{ prop.propPrix }} €</td>
+                                <td>
+                                    {{ prop.propNombre }}
+                                </td>
+                                <td>
+                                    {% if prop.propAccept == false %}
+                                        Non
+                                    {% else %}
+                                        Oui
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if propositions[prop.propLot.ltIdLot] is defined %}
+                                        <button onclick="encherir({{ prop.propLot.ltIdLot }}, {{ propositions[prop.propLot.ltIdLot] }} ,'{{ path('ajax_encherir') }}')" class="btn btn-outline-primary btn-block">J'enchéris !</button>
+                                    {% else %}
+                                        <button onclick="encherir({{ prop.propLot.ltIdLot }}, {{ prop.propLot.ltPrixMinimum }}, '{{ path('ajax_encherir') }}')" class="btn btn-outline-primary btn-block">J'enchéris !</button>
+                                    {% endif %}
+                                </td>
+                            </tr>
                         {% endfor %}
-                    </td>
-                    <td>{{ prop.propPrix }}</td>
-                    <td>
-                        {{ prop.propNombre }}
-                    </td>
-                    <td>
-                        {% if prop.propAccept == false %}
-                            Non
-                        {% else %}
-                            Oui
-                        {% endif %}
-                    </td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-    </div>
+                        </tbody>
+                    </table>
+                </div>
+        {% endif %}
+
+
 {% endblock %}

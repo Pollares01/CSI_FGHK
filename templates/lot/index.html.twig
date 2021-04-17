@@ -83,7 +83,9 @@
             </thead>
             {% for lot in listLot %}
                 <tr>
-                    <td><i class="fas fa-book-open" onclick="showPropositions({{ lot.ltIdLot }}, '{{ path('lot_props') }}')" title="Voir les visualisations"></i></td>
+                    <td>
+                        <i class="fas fa-book-open" onclick="showPropositions({{ lot.ltIdLot }}, '{{ path('lot_props') }}')" title="Voir les visualisations"></i><br>
+                    </td>
                     <td>{{ lot.ltDateDebut | date('d/m/Y') }}</td>
                     <td>{{ lot.ltDateFin | date('d/m/Y') }}</td>
                     <td>{{ lot.ltStatut }}</td>

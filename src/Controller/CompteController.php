@@ -23,9 +23,16 @@ class CompteController extends AbstractController
             ->getQuery()
             ->getResult();
 
+        $superieur = array();
+        $propositions = array();
+        foreach ($props as $prop) {
+            $propositions[$prop->getPropLot()->getLtIdLot()] = $prop->getPropPrix();
+        }
 
         return $this->render('compte/index.html.twig', [
             'props' => $props,
+            'sup' => $superieur,
+            'propositions'=> $propositions
         ]);
     }
 }

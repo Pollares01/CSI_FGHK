@@ -4,16 +4,12 @@ namespace App\Controller;
 
 use App\Entity\Composition;
 use App\Entity\Lot;
-use App\Entity\Produit;
-use App\Form\LotType;
 use App\Repository\LotRepository;
 use App\Repository\ProduitRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
-use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -22,14 +18,34 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class LotController extends AbstractController
 {
+
+
+    public static function majLot(LotRepository $lotRepository, EntityManagerInterface $manager){
+        $list = $lotRepository->findAll();
+
+        foreach ($list as $lot) {
+            if($lot->getLtDateDebut() > new \DateTime() && $lot->getLtStatut() == "En attente") {
+                $lot->setLtStatut("En vente");
+            }
+
+            if($lot->getLtDateFin() > new \DateTime && $lot->getLtStatut() == "En vente" ){
+                $lot->setLtStatut("Terminé");
+            }
+
+            $manager->persist($lot);
+        }
+        $manager->flush();
+    }
+
+
     /**
      * @Route("/lot", name="lot")
      * @param LotRepository $lotRepository
      * @return Response
      */
-    public function index(LotRepository $lotRepository): Response
+    public function index(LotRepository $lotRepository, EntityManagerInterface $manager): Response
     {
-
+        LotController::majLot($lotRepository, $manager);
         return $this->render('lot/index.html.twig', [
             'listLot' => $lotRepository->findAll(),
         ]);
