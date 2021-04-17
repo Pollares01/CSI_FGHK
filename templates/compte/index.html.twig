@@ -1,0 +1,37 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello CompteController!{% endblock %}
+
+{% block body %}
+    <div class="jumbotron">
+        <div class="display-4">MON COMPTE</div>
+    </div>
+    <div class="container">
+        <table class="table table-active">
+            <thead>
+                <th scope="col"></th>
+                <th scope="col">Produits</th>
+                <th scope="col">Votre proposition</th>
+                <th scope="col">Nombre de propositions</th>
+                <th scope="col"></th>
+            </thead>
+
+            <tbody>
+            {% for prop in props %}
+                <tr>
+                    <td></td>
+                    <td>
+                        {% for comp in prop.propLot.composition %}
+                            {{ comp.compIdproduit.protNom }} x{{ comp.compQuantite }}<br>
+                        {% endfor %}
+                    </td>
+                    <td>{{ prop.propPrix }}</td>
+                    <td>
+                        {{ prop.propNombre }}
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
