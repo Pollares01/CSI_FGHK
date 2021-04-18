@@ -4,7 +4,7 @@
 
 {% block javascripts %}
     <script type="text/javascript">
-        function encherir(id, prixMin, path){
+        function encherir(id, prixMin, path) {
             $.confirm({
                 title: 'A combien voulez-vous enchérir ?',
                 closeIcon: true,
@@ -17,7 +17,7 @@
                     '<form action="" class="formName">' +
                     '<div class="container"></div><div class="form-group">' +
                     '<label>Entrez votre prix :</label>' +
-                    '<input type="number" placeholder="Votre prix" min="'+prixMin+'" value="'+prixMin+'" class="prix form-control" required />' +
+                    '<input type="number" placeholder="Votre prix" min="' + prixMin + '" value="' + prixMin + '" class="prix form-control" required />' +
                     '</div></div>' +
                     '</form>',
                 buttons: {
@@ -26,28 +26,28 @@
                         btnClass: 'btn btn-outline-primary',
                         action: function () {
                             var prix = this.$content.find('.prix').val();
-                            if(!prix){
+                            if (!prix) {
                                 $.alert('Veuillez entrer un prix valide');
                                 return false;
                             }
                             $.ajax({
                                 url: path,
-                                data:{
-                                    id:id,
-                                    prix:prix,
+                                data: {
+                                    id: id,
+                                    prix: prix,
                                 },
-                                dataType:'json',
-                                method:'post',
-                                success: function(response){
-                                    if(response === "non") {
+                                dataType: 'json',
+                                method: 'post',
+                                success: function (response) {
+                                    if (response === "non") {
                                         $.alert({
                                             title: 'Vous ne pouvez plus faire d\'enchères pour ce lot.',
                                             content: ' ',
                                             type: 'red',
-                                            columnClass:'m',
-                                            buttons:{
-                                                'ok':{
-                                                    action: function (){
+                                            columnClass: 'm',
+                                            buttons: {
+                                                'ok': {
+                                                    action: function () {
                                                         document.location.reload()
                                                     }
                                                 }
@@ -58,10 +58,10 @@
                                             title: 'Votre proposition a été émise !',
                                             content: ' ',
                                             type: 'green',
-                                            columnClass:'m',
-                                            buttons:{
-                                                'ok':{
-                                                    action: function (){
+                                            columnClass: 'm',
+                                            buttons: {
+                                                'ok': {
+                                                    action: function () {
                                                         document.location.reload()
                                                     }
                                                 }
@@ -70,12 +70,12 @@
                                     }
 
                                 },
-                                error: function (){
+                                error: function () {
                                     $.alert({
                                         title: 'Oups... Une erreur est parvenue !',
                                         content: ' ',
                                         type: 'red',
-                                        columnClass:'m'
+                                        columnClass: 'm'
                                     })
                                 }
                             })
@@ -101,57 +101,78 @@
 
 {% block body %}
     <div class="jumbotron">
-        <div class="display-4">MON COMPTE</div>
-        {% if not app.user %}
-            <hr>
-            <p class="lead">VOUS N'ETES PAS CONNECTÉ, APPUYEZ <a href="{{ path('app_login') }}">ICI</a>.</p>
-            </div>
+    <div class="display-4">MON COMPTE</div>
+    {% if not app.user %}
+        <hr>
+        <p class="lead">VOUS N'ETES PAS CONNECTÉ, APPUYEZ <a href="{{ path('app_login') }}">ICI</a>.</p>
+        </div>
+    {% else %}
+        </div>
+
+        <div class="container">
+            {% if props is empty %}
+                <div class="jumbotron">
+                    <p class="lead">
+                        Vous n'avez aucune offre en cours, rendez vous à l'accueil pour en faire une !
+                    </p>
+                </div>
             {% else %}
-                </div>
-                <div class="container">
-                    <table class="table table-active">
-                        <thead>
-                        <th scope="col"></th>
-                        <th scope="col">Produits</th>
-                        <th scope="col">Votre dernière proposition</th>
-                        <th scope="col">Nombre de propositions</th>
-                        <th scope="col" style="width: 20%">Dernière proposition acceptée ou non</th>
-                        <th scope="col"></th>
-                        </thead>
+                <table class="table table-active">
+                    <thead>
+                    <th scope="col"></th>
+                    <th scope="col">Produits</th>
+                    <th scope="col">Votre dernière proposition</th>
+                    <th scope="col">Nombre de propositions</th>
+                    <th scope="col" style="width: 20%">Dernière proposition acceptée ou non</th>
+                    <th scope="col"></th>
+                    </thead>
 
-                        <tbody>
-                        {% for prop in props %}
-                            <tr>
-                                <td></td>
-                                <td>
-                                    {% for comp in prop.propLot.composition %}
-                                        {{ comp.compIdproduit.protNom }} x{{ comp.compQuantite }}<br>
-                                    {% endfor %}
-                                </td>
-                                <td>{{ prop.propPrix }} €</td>
-                                <td>
-                                    {{ prop.propNombre }}
-                                </td>
-                                <td>
+                    <tbody>
+                    {% for prop in props %}
+                        <tr>
+                            <td></td>
+                            <td>
+                                {{ prop.propLot.ltIdLot }}
+
+                                {% for comp in prop.propLot.composition %}
+                                    {{ comp.compIdproduit.protNom }} x{{ comp.compQuantite }}<br>
+                                {% endfor %}
+                            </td>
+                            <td>{{ prop.propPrix }} €</td>
+                            <td>
+                                {{ prop.propNombre }}
+                            </td>
+                            <td>
+                                {% if prop.propAccept == false %}
+                                    Non
+                                {% else %}
+                                    Oui
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if prop.propLot.ltStatut == "Terminé" %}
                                     {% if prop.propAccept == false %}
-                                        Non
+                                        Nom du gagnant : <i>{{ gagnants[prop.propLot.ltIdLot] }}</i>
                                     {% else %}
-                                        Oui
+                                        <div class="btn btn-outline-success">Accepter le lot</div>
                                     {% endif %}
-                                </td>
-                                <td>
+                                {% else %}
                                     {% if propositions[prop.propLot.ltIdLot] is defined %}
-                                        <button onclick="encherir({{ prop.propLot.ltIdLot }}, {{ propositions[prop.propLot.ltIdLot] }} ,'{{ path('ajax_encherir') }}')" class="btn btn-outline-primary btn-block">J'enchéris !</button>
+                                        <button onclick="encherir({{ prop.propLot.ltIdLot }}, {{ propositions[prop.propLot.ltIdLot] }} ,'{{ path('ajax_encherir') }}')"
+                                                class="btn btn-outline-primary btn-block">J'enchéris !
+                                        </button>
                                     {% else %}
-                                        <button onclick="encherir({{ prop.propLot.ltIdLot }}, {{ prop.propLot.ltPrixMinimum }}, '{{ path('ajax_encherir') }}')" class="btn btn-outline-primary btn-block">J'enchéris !</button>
+                                        <button onclick="encherir({{ prop.propLot.ltIdLot }}, {{ prop.propLot.ltPrixMinimum }}, '{{ path('ajax_encherir') }}')"
+                                                class="btn btn-outline-primary btn-block">J'enchéris !
+                                        </button>
                                     {% endif %}
-                                </td>
-                            </tr>
-                        {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-        {% endif %}
-
-
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            {% endif %}
+        </div>
+    {% endif %}
 {% endblock %}

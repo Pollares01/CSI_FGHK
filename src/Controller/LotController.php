@@ -6,6 +6,7 @@ use App\Entity\Composition;
 use App\Entity\Lot;
 use App\Repository\LotRepository;
 use App\Repository\ProduitRepository;
+use App\Repository\PropositionRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -20,16 +21,82 @@ class LotController extends AbstractController
 {
 
 
-    public static function majLot(LotRepository $lotRepository, EntityManagerInterface $manager){
-        $list = $lotRepository->findAll();
+    public static function majLot(LotRepository $lotRepository, EntityManagerInterface $manager, PropositionRepository $propositionRepository){
+        $lotFuturs = $lotEnAttente = $lotRepository->createQueryBuilder('l')
+            ->where('l.ltDateDebut > :date')
+//            ->andWhere('l.ltDateFin < :date')
+            ->setParameter('date', new \DateTime())
+            ->getQuery()
+            ->getResult();
+//        dump($lotFuturs);
+        foreach ($lotFuturs as $lot) {
+            $lot->setLtStatut("En attente");
 
-        foreach ($list as $lot) {
-            if($lot->getLtDateDebut() > new \DateTime() && $lot->getLtStatut() == "En attente") {
-                $lot->setLtStatut("En vente");
-            }
+            $manager->persist($lot);
+        }
+//        dd(new \DateTime());
 
-            if($lot->getLtDateFin() > new \DateTime && $lot->getLtStatut() == "En vente" ){
+        $lotEnAttente = $lotRepository->createQueryBuilder('l')
+            ->where('l.ltDateDebut < :date')
+            ->andWhere('l.ltDateFin > :date')
+            ->setParameter('date', new \DateTime())
+            ->getQuery()
+            ->getResult();
+
+        foreach ($lotEnAttente as $lot) {
+            $lot->setLtStatut("En vente");
+
+            $manager->persist($lot);
+        }
+
+        $lotATerminer = $lotRepository->createQueryBuilder('l')
+            ->where('l.ltDateFin < :date')
+            ->setParameter('date', new \DateTime())
+            ->getQuery()
+            ->getResult();
+
+        foreach ($lotATerminer as $lot) {
+            if($lot->getLtStatut() != "Terminé"){
                 $lot->setLtStatut("Terminé");
+
+                $propositions = $propositionRepository->createQueryBuilder('p')
+                    ->where('p.propLot = :l')
+                    ->andWhere()
+                    ->setParameter('l', $lot)
+                    ->getQuery()
+//                ->getDQL();
+                    ->getResult();
+
+
+                $prixMax = $lot->getLtPrixMinimum();
+                $propTemp = null;
+                foreach ($propositions as $pro) {
+                    if($pro->getPropPrix() > $prixMax){
+                        if($propTemp != null) {
+                            $propTemp->setPropAccept(false);
+                        }
+                        $pro->setPropAccept(true);
+                        $prixMax = $pro->getPropPrix();
+                        $propTemp = $pro;
+                    } else if($pro->getPropPrix() == $prixMax){
+                        if($propTemp != null) {
+                            if($propTemp->getPropDate() < $pro->getPropDate()){
+                                $propTemp->setPropAccept(false);
+                                $pro->setPropAccept(true);
+                                $prixMax = $pro->getPropPrix();
+                                $propTemp = $pro;
+                            }
+                        } else{
+                            $pro->setPropAccept(true);
+                            $prixMax = $pro->getPropPrix();
+                            $propTemp = $pro;
+                        }
+                    }
+                    if($propTemp != null) {
+                        $manager->persist($propTemp);
+                    }
+                    $manager->persist($pro);
+                }
             }
 
             $manager->persist($lot);
@@ -43,9 +110,9 @@ class LotController extends AbstractController
      * @param LotRepository $lotRepository
      * @return Response
      */
-    public function index(LotRepository $lotRepository, EntityManagerInterface $manager): Response
+    public function index(LotRepository $lotRepository, EntityManagerInterface $manager, PropositionRepository $propositionRepository): Response
     {
-        LotController::majLot($lotRepository, $manager);
+        LotController::majLot($lotRepository, $manager, $propositionRepository);
         return $this->render('lot/index.html.twig', [
             'listLot' => $lotRepository->findAll(),
         ]);
@@ -61,7 +128,7 @@ class LotController extends AbstractController
      * @param ProduitRepository $produitRepository
      * @return RedirectResponse|Response
      */
-    public function mod(Lot $lot = null, EntityManagerInterface $manager, Request $request, ProduitRepository $produitRepository){
+    public function mod(Lot $lot = null, EntityManagerInterface $manager, Request $request, ProduitRepository $produitRepository, LotRepository $lem){
         if(!$lot){
             $lot = new Lot();
         }
@@ -125,6 +192,10 @@ class LotController extends AbstractController
         if($form->isSubmitted()){
             if ($form->isValid()){
 
+                $id = ($lem->createQueryBuilder('l')->select('max(l.ltIdlot)')->getQuery()->getSingleScalarResult())+1;
+
+
+                $lot->setLtIdlot($id);
                 $lot->setLtDateDebut($form->getViewData()['ltDateDebut']);
                 $lot->setLtDateFin($form->getViewData()['ltDateFin']);
                 $lot->setLtStatut($form->getViewData()['ltStatut']);

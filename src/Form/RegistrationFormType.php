@@ -65,7 +65,8 @@ class RegistrationFormType extends AbstractType
                 'label'=>'Date de naissance',
                 'widget'=>'single_text',
                 'attr'=>[
-                    'class' => 'form-control'
+                    'class' => 'form-control',
+                    'max' => (new \DateTime())->format('Y-m-d')
                 ]
             ])
             ->add('clAdresse', TextType::class, [

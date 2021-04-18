@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Repository\LotRepository;
 use App\Repository\PropositionRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -17,10 +18,13 @@ class IndexController extends AbstractController
      * @param LotRepository $lotRepository
      * @param PaginatorInterface $paginator
      * @param Request $request
+     * @param PropositionRepository $propositionRepository
+     * @param EntityManagerInterface $manager
      * @return Response
      */
-    public function index(LotRepository $lotRepository, PaginatorInterface $paginator, Request $request, PropositionRepository $propositionRepository): Response
+    public function index(LotRepository $lotRepository, PaginatorInterface $paginator, Request $request, PropositionRepository $propositionRepository, EntityManagerInterface $manager): Response
     {
+        LotController::majLot($lotRepository, $manager, $propositionRepository);
         $query = $lotRepository->createQueryBuilder('l')
             ->where('l.ltStatut = \'En vente\'')->getQuery();
 
