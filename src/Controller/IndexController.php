@@ -10,6 +10,8 @@ use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\ButtonType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -42,8 +44,25 @@ class IndexController extends AbstractController
         $form->add('produits', ChoiceType::class, [
             'choices'=>$produitChoix,
             'multiple'=>true,
+            'required'=>false,
             'attr'=>[
                 'class'=>'select-produit form-control'
+            ]
+        ])
+        ->add('prixMin', IntegerType::class, [
+            'label'=>'Prix estimé mini',
+            'required'=>false,
+            'attr'=>[
+                'class'=>'form-control',
+                'placeholder'=>'€'
+            ]
+        ])
+        ->add('prixMax', IntegerType::class, [
+            'label'=>'Prix estimé maxi',
+            'required'=>false,
+            'attr'=>[
+                'class'=>'form-control',
+                'placeholder'=>'€'
             ]
         ]);
 
@@ -57,6 +76,16 @@ class IndexController extends AbstractController
                     $query->join('l.composition', 'c')
                     ->andWhere('c.compIdproduit in (:array)')
                     ->setParameter('array', $form->getViewData()['produits']);
+                }
+                if(!is_null($form->getViewData()['prixMin'])){
+                    $query
+                        ->andWhere('l.ltPrixEstime >= :prixMin')
+                        ->setParameter('prixMin', $form->getViewData()['prixMin']);
+                }
+                if(!is_null($form->getViewData()['prixMax'])){
+                    $query
+                        ->andWhere('l.ltPrixEstime <= :prixMax')
+                        ->setParameter('prixMax', $form->getViewData()['prixMax']);
                 }
             }
         }

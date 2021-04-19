@@ -8,7 +8,7 @@
         window.onload = function(){
 
             $('.select-produit').select2({
-                placeholder: 'This is my placeholder',
+                placeholder: 'Produits..',
                 allowClear: true
             });
         }
@@ -133,9 +133,16 @@
 
     <div class="container">
         {{ form_start(form, {'attr': {'id': 'recherche'}}) }}
-        {{ form_row(form.produits) }}
+
+        <div class="row">
+            <div class="col-8">{{ form_row(form.produits) }}</div>
+            <div class="col-2">{{ form_row(form.prixMin) }}</div>
+            <div class="col-2">{{ form_row(form.prixMax) }}</div>
+        </div>
         <button class="btn btn-outline-primary">Rechercher</button>
+        <a href="{{ path('home') }}"><i class="fas fa-retweet"></i> Réinitialiser le formulaire</a>
         {{ form_end(form) }}
+        <br>
         <table class="table table-active">
             <thead>
                 <th scope="col" style="width: 20%">Date début</th>
