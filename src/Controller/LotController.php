@@ -160,18 +160,18 @@ class LotController extends AbstractController
                 'attr'=>[
                     'class'=>'form-control'
                 ]
-            ])
-            ->add('ltStatut', ChoiceType::class, [
-                'label'=>'Statut du lot',
-                'choices'=>[
-                    'En vente' => 'En vente',
-                    'En attente' => 'En attente',
-                ],
-                'placeholder'=> 'Veuillez sélectionner un statut',
-                'attr'=>[
-                    'class'=>'form-control'
-                ]
             ]);
+//            ->add('ltStatut', ChoiceType::class, [
+//                'label'=>'Statut du lot',
+//                'choices'=>[
+//                    'En vente' => 'En vente',
+//                    'En attente' => 'En attente',
+//                ],
+//                'placeholder'=> 'Veuillez sélectionner un statut',
+//                'attr'=>[
+//                    'class'=>'form-control'
+//                ]
+//            ]);
 
         $listProd = $produitRepository->findAll();
         foreach ($listProd as $produit) {
@@ -198,7 +198,7 @@ class LotController extends AbstractController
                 $lot->setLtIdlot($id);
                 $lot->setLtDateDebut($form->getViewData()['ltDateDebut']);
                 $lot->setLtDateFin($form->getViewData()['ltDateFin']);
-                $lot->setLtStatut($form->getViewData()['ltStatut']);
+                $lot->setLtStatut('En attente');
                 $lot->setLtPrixEstime($form->getViewData()['ltPrixEstime']);
                 $lot->setLtPrixMinimum($form->getViewData()['ltPrixMinimum']);
 

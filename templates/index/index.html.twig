@@ -4,6 +4,20 @@
 
 {% block javascripts %}
     <script type="text/javascript">
+
+        window.onload = function(){
+
+            $('.select-produit').select2({
+                placeholder: 'This is my placeholder',
+                allowClear: true
+            });
+        }
+
+        function submit() {
+            console.log('ok');
+            $('#recherche').submit();
+        }
+
         function encherir(id, prixMin, path){
             $.confirm({
                 title: 'A combien voulez-vous enchérir ?',
@@ -118,6 +132,10 @@
     </div>
 
     <div class="container">
+        {{ form_start(form, {'attr': {'id': 'recherche'}}) }}
+        {{ form_row(form.produits) }}
+        <button class="btn btn-outline-primary">Rechercher</button>
+        {{ form_end(form) }}
         <table class="table table-active">
             <thead>
                 <th scope="col" style="width: 20%">Date début</th>
