@@ -79,6 +79,7 @@
             <th scope="col">Date fin</th>
             <th scope="col">Statut</th>
             <th scope="col">Prix mini / prix estimé</th>
+            <th scope="col">Bénéfice</th>
             <th scope="col" >Composition</th>
             </thead>
             {% for lot in listLot %}
@@ -90,6 +91,11 @@
                     <td>{{ lot.ltDateFin | date('d/m/Y') }}</td>
                     <td>{{ lot.ltStatut }}</td>
                     <td>{{ lot.ltPrixMinimum }} € / {{ lot.ltPrixEstime }} €</td>
+                    <td>
+                        {% if lot. is not defined %}
+                            -
+                        {% endif %}
+                    </td>
                     <td>
                         {% for comp in lot.composition %}
                             {{ comp.compIdproduit.protNom }} x{{ comp.compQuantite }}<br>

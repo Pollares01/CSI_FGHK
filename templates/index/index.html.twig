@@ -132,16 +132,18 @@
     </div>
 
     <div class="container">
-        {{ form_start(form, {'attr': {'id': 'recherche'}}) }}
+        {% if app.user %}
+            {{ form_start(form, {'attr': {'id': 'recherche'}}) }}
 
-        <div class="row">
-            <div class="col-8">{{ form_row(form.produits) }}</div>
-            <div class="col-2">{{ form_row(form.prixMin) }}</div>
-            <div class="col-2">{{ form_row(form.prixMax) }}</div>
-        </div>
-        <button class="btn btn-outline-primary">Rechercher</button>
-        <a href="{{ path('home') }}"><i class="fas fa-retweet"></i> Réinitialiser le formulaire</a>
-        {{ form_end(form) }}
+            <div class="row">
+                <div class="col-8">{{ form_row(form.produits) }}</div>
+                <div class="col-2">{{ form_row(form.prixMin) }}</div>
+                <div class="col-2">{{ form_row(form.prixMax) }}</div>
+            </div>
+            <button class="btn btn-outline-primary">Rechercher</button>
+            <a href="{{ path('home') }}"><i class="fas fa-retweet"></i> Réinitialiser le formulaire</a>
+            {{ form_end(form) }}
+        {% endif %}
         <br>
         <table class="table table-active">
             <thead>
